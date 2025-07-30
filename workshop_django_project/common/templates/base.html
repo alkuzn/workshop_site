@@ -1,0 +1,13 @@
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static '/css/style.css' %}">
+<div class="body grid-container">
+    <div class="header">Тут шудет шапка</div>
+    <div class="menu">
+        <div><a href="/">Главная</a></div>
+        <div><a href={% url "about_page" %}>О нас</a></div>
+        <div><a href={% url "contacts_page" %}>Контакты</a></div>
+    </div>
+    <div class="body">{% block body %}Тело{% endblock body%}</div>
+    <div class="bottom">Низ</div>
+</div>
+
