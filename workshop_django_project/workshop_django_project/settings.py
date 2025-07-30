@@ -25,7 +25,9 @@ SECRET_KEY = 'django-insecure-gdpq@zn_adais%v*b5dt8ub&+c$w&b5r3i4m@v$^gr9%ha%8xh
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    'django-app',
+]
 
 
 # Application definition
@@ -37,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'common',
 ]
 
 MIDDLEWARE = [
@@ -115,7 +118,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
 STATIC_URL = 'static/'
-
+STATIC_ROOT = BASE_DIR.parent/'nginx'/STATIC_URL
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 

@@ -1,6 +1,10 @@
 services:
     django-app:
         build: .
+    nginx:
+        build: nginx/
+        depends_on: 
+           - django-app
         ports: 
-            - 8000:8000
+            - 8000:80
           
