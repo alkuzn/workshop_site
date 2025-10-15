@@ -16,9 +16,19 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from common import urls as commonurls
-
+from common import urls as common_urls
+from login import urls as login_urls
+from account import urls as account_urls
+from dispatcher import urls as dispatcher_urls
+from orders import urls as orders_urls
+from parts import urls as parts_urls
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('',include(commonurls))
+    path('',include(common_urls, namespace='common')),
+    path('auth/',include(login_urls)),
+    path('', include(account_urls)),
+    path('employee-panel/', include(dispatcher_urls)),
+    path('', include(orders_urls)),
+    path('', include(parts_urls))
 ]
+

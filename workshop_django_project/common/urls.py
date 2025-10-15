@@ -1,6 +1,6 @@
 from django.urls import path
 from common import views
-
+app_name='common'
 urlpatterns = [
     path('', views.index),
     path('contacts/', views.contacts, name='contacts_page'),

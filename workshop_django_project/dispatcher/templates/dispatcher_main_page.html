@@ -1,0 +1,153 @@
+
+{% load static %}
+{% block body %}
+Диспетчер<br>
+{% url 'orders-list' %}
+<input type="datetime-local" id="event-time" name="event_time">
+<img width=70% src='{% static "/pictures/1.png" %}'>
+<input type="text" list="cities" />
+    <datalist id="cities">
+        <option value="Москва">
+        <option value="Санкт-Петербург">
+        <option value="Новосибирск">
+        <option value="Екатеринбург">
+        <option value="Казань">
+    </datalist>
+<div id='addedit_form'>
+    Создать заявку
+<form id='ff' method="POST" onsubmit="return false;" action={% url 'orders-list' %}>
+    {% csrf_token %}
+    <table>
+        {{ machineform.as_table }}
+       <label>Mark</label>  <button onclick='add_new_mark()'>Добавить новый</button>
+        <div id='new_mark' style='display: none'><input id='newMark' type='text'/><button >OK</button></div>
+    </table>
+    <table>
+{{ create_form.as_table }}
+</table>
+<input  type="submit" value="Создать" />
+</form>
+</div>
+
+</form>
+</div>
+<div id='tab'></div>
+<div id='order_detail'>
+    <form id='edit-form'>
+        {% csrf_token %}
+        <table>
+        {{edit_form.as_table}}
+        </table>
+        <input  type="submit" value="Сохранить" />
+    </form>
+
+</div>
+<script>
+ff = document.getElementById('ff')
+ff.onsubmit = async (e) => {
+    e.preventDefault();
+    po = new FormData(ff)
+    for (key of po.keys()) {
+    console.log(key)
+    }
+    
+    let response = await fetch({% url 'orders-list' %}, {
+    method: 'POST',
+    body: new FormData(ff)
+    });
+
+    let result = await response.json();
+    getOrders().then(printOrders)
+    console.log(result);
+};
+editf = document.getElementById('edit-form')
+editf.onsubmit = async (e) => {
+    e.preventDefault();
+    po = new FormData(editf)
+    let data = {}
+    for (key of po.keys()) {
+    console.log(key)
+        data[key.replace('edit-','')] = po.get(key)
+    }
+    console.log(data)
+    let response = await fetch({% url 'orders-list' %}, {
+    method: 'PATCH',
+    body: data,
+    headers:{
+        content_type: "application/json"
+    }
+    });
+
+    let result = await response.json();
+    //getOrders().then(printOrders)
+    console.log(result);
+};
+
+async function add_new_mark(){
+    document.getElementById('new_mark').style='display: block'
+    document.getElementById('newMark')
+    response = await fetch('http://')
+    document.getElementById('new_mark').style='display: none'
+}
+
+async function getOrders(){
+    let req = await fetch({% url 'orders-list' %})
+    let res = await req.json()
+    return res
+}
+async function getOrders1(){
+    return [{    id: 1,
+                problem: "Не работает"
+    }]
+}
+fff = 0
+async function edit_order(order_id){
+    let response = await fetch(`{% url 'orders-list' %}${order_id}`);
+    
+    let result = await response.json();
+    console.log(result)
+    let edit_f = document.getElementById('edit-form');
+    edit_f.elements['edit-problem'].value = result['problem']
+    edit_f.elements['edit-status'].value = result['status']
+    edit_f.elements['edit-date_begin'].value = result['date_begin']
+    for (let i of edit_f.elements['id_edit-client'].options){
+        if (i.text == result['client']){
+            edit_f.elements['id_edit-client'].value = i.value;
+            break;
+        }
+    }
+    edit_f.elements['edit-appartment'].value = result['machine']['model']
+}
+
+function printOrders(orders){
+    
+    let table = document.getElementById('tab');
+    table.innerHTML = '';
+    console.log(orders)
+    for (let order of orders){
+        console.log(order)
+        row = document.createElement('tr');
+        for (key in order){
+            col = document.createElement('td')
+            if (key=='machine'){
+                col.innerText = `${order[key]['type']} ${order[key]['mark']} ${order[key]['model']}`
+            }
+            else {
+
+                col.innerText = order[key]
+            }
+            row.appendChild(col)
+        }
+        let edit_button = document.createElement('button')
+        edit_button.onclick = ()=>edit_order( order['id'] )
+        console.log(edit_button.onclick)
+        edit_button.innerText = "Редактировать!"
+        row.appendChild(edit_button)
+        table.appendChild(row)
+    
+    }
+}
+getOrders().then(printOrders)
+</script>
+
+{% endblock body %}
