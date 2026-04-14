@@ -1,1 +1,0 @@
-[{"model": "auth.group", "pk": 1, "fields": {"name": "repairman", "permissions": [53, 54, 55, 56, 48, 28, 32, 52, 34, 36, 60, 40, 44, 64]}}, {"model": "auth.group", "pk": 2, "fields": {"name": "supplymanager", "permissions": []}}, {"model": "auth.group", "pk": 3, "fields": {"name": "dispatcher", "permissions": []}}]

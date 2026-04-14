@@ -1,0 +1,1 @@
+[{"model": "orders.settlement", "pk": 1, "fields": {"name": "Балахна", "type": "город"}}, {"model": "orders.settlement", "pk": 2, "fields": {"name": "Заволжье", "type": "город"}}]
