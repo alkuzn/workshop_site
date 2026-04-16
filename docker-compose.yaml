@@ -1,10 +1,46 @@
 services:
+    postgres_db:
+        build:
+            dockerfile_inline: |
+                FROM postgres:18.3-alpine3.23
+                RUN <<EOF
+                mkdir /docker-entrypoint-initdb.d
+                chown postgres /docker-entrypoint-initdb.d
+                EOF
+                USER postgres
+                RUN echo 'CREATE DATABASE ${DB_NAME};' > /docker-entrypoint-initdb.d/create_database.sql
+                USER root
+        environment:
+            POSTGRES_PASSWORD: ${DB_ADMIN_PASSWORD} 
+        volumes:
+            - ../data_db:/var/lib/postgresql/data
+        healthcheck:
+            test: pg_isready
+
     django-app:
         build: .
-    nginx:
-        build: nginx/
-        depends_on: 
-           - django-app
         ports: 
-            - 8000:80
-          
+            - 8000:8000
+        environment: &db_cred
+            DB_HOST: ${DB_HOST}
+            DB_NAME: ${DB_NAME}
+            DB_USER: ${DB_SERVICE_USER}
+            DB_PASSWORD: ${DB_SERVICE_USER_PASSWORD}
+        depends_on:
+            postgres_db:
+                condition: service_started #должно быть h
+            init_app: 
+                condition: service_completed_successfully
+
+    init_app:
+        build: .
+        environment: 
+            <<: *db_cred
+            DB_USER: ${DB_ADMIN}
+            DB_PASSWORD: ${DB_ADMIN_PASSWORD}
+            DB_NEW_SERVICE_USER: ${DB_SERVICE_USER}
+            DB_NEW_SERVICE_USER_PASSWORD: ${DB_SERVICE_USER_PASSWORD}
+        depends_on:
+            postgres_db:
+                condition: service_healthy #должно быть h
+        command: /bin/sh -c "./manage.py makemigrations && ./manage.py migrate && ./manage.py loaddata apps/orders/fixtures/*"

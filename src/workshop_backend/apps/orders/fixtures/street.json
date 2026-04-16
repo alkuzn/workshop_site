@@ -1,0 +1,1 @@
+[{"model": "orders.street", "pk": 1, "fields": {"name": "Бийская", "city": 1, "prefix": ""}}, {"model": "orders.street", "pk": 2, "fields": {"name": "Коминтерна", "city": 1, "prefix": ""}}]
